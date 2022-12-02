@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class Solution {
+public class CalorieCounting {
     private static final Scanner in = new Scanner(new BufferedReader(new InputStreamReader(System.in)));
     private static final ArrayList<Integer> elves = new ArrayList<>();
 
