@@ -3,8 +3,10 @@ package day03;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class RucksackReorganization {
     private static final Scanner in = new Scanner(new BufferedReader(new InputStreamReader(System.in)));
     private static final ArrayList<String> rucksacks = new ArrayList<>();
@@ -22,7 +24,16 @@ public class RucksackReorganization {
         int priorities = 0;
 
         for (String rucksack : rucksacks) {
-            priorities += getPriority(rucksack);
+            HashSet<Character> firstHalf = new HashSet<>();
+            for (int i = 0; i < rucksack.length() / 2; i++) {
+                firstHalf.add(rucksack.charAt(i));
+            }
+            HashSet<Character> secondHalf = new HashSet<>();
+            for (int i = rucksack.length() / 2; i < rucksack.length(); i++) {
+                secondHalf.add(rucksack.charAt(i));
+            }
+            firstHalf.retainAll(secondHalf);
+            priorities += char2int(firstHalf.stream().findAny().get());
         }
 
         System.out.println(priorities);
@@ -32,38 +43,25 @@ public class RucksackReorganization {
         int badgeSum = 0;
 
         int n = rucksacks.size();
-        for (int i = 2; i < n; i += 3) {
-            badgeSum += getBadgeValue(rucksacks.get(i-2), rucksacks.get(i-1), rucksacks.get(i));
+        for (int i = 0; i < n-2; i += 3) {
+            HashSet<Character> e1 = new HashSet<>();
+            HashSet<Character> e2 = new HashSet<>();
+            HashSet<Character> e3 = new HashSet<>();
+            for (int j = 0; j < rucksacks.get(i).length(); j++) {
+                e1.add(rucksacks.get(i).charAt(j));
+            }
+            for (int j = 0; j < rucksacks.get(i+1).length(); j++) {
+                e2.add(rucksacks.get(i+1).charAt(j));
+            }
+            for (int j = 0; j < rucksacks.get(i+2).length(); j++) {
+                e3.add(rucksacks.get(i+2).charAt(j));
+            }
+            e2.retainAll(e3);
+            e1.retainAll(e2);
+            badgeSum += char2int(e1.stream().findAny().get());
         }
 
         System.out.println(badgeSum);
-    }
-
-    private static int getPriority(String s) {
-        int mid = s.length() / 2;
-        for (int i = 0; i < mid; i++) {
-            for (int j = mid; j < s.length(); j++) {
-                if (s.charAt(i) == s.charAt(j)) {
-                    return char2int(s.charAt(i));
-                }
-            }
-        }
-        throw new RuntimeException();
-    }
-
-    private static int getBadgeValue(String s1, String s2, String s3) {
-        for (int i = 0; i < s1.length(); i++) {
-            for (int j = 0; j < s2.length(); j++) {
-                if (s1.charAt(i) == s2.charAt(j)) {
-                    for (int k = 0; k < s3.length(); k++) {
-                        if (s1.charAt(i) == s3.charAt(k)) {
-                            return char2int(s1.charAt(i));
-                        }
-                    }
-                }
-            }
-        }
-        throw new RuntimeException();
     }
 
     private static int char2int(char c) {
