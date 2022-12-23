@@ -2,6 +2,7 @@ package day09;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -13,9 +14,14 @@ public class RopeBridge {
         char direction;
         int magnitude;
 
-        HashSet<Coordinate> tailPositions = new HashSet<>();
-        Coordinate head = new Coordinate(0, 0);
-        Coordinate tail = new Coordinate(0, 0);
+        HashSet<Coordinate> partOneTailPositions = new HashSet<>();
+        HashSet<Coordinate> partTwoTailPositions = new HashSet<>();
+
+        int numOfKnots = 10;
+        ArrayList<Coordinate> rope = new ArrayList<>(numOfKnots);
+        for (int i = 0; i < numOfKnots; i++) {
+            rope.add(new Coordinate(0, 0));
+        }
 
         while (in.hasNextLine()) {
             line = in.nextLine().split(" ");
@@ -24,18 +30,22 @@ public class RopeBridge {
 
             for (int i = 0; i < magnitude; i++) {
                 switch (direction) {
-                    case 'U' -> head.y++;
-                    case 'D' -> head.y--;
-                    case 'L' -> head.x--;
-                    case 'R' -> head.x++;
+                    case 'U' -> rope.get(0).y++;
+                    case 'D' -> rope.get(0).y--;
+                    case 'L' -> rope.get(0).x--;
+                    case 'R' -> rope.get(0).x++;
                     default -> throw new IllegalArgumentException();
                 }
-                tail.follow(head);
-                tailPositions.add(new Coordinate(tail));
+                for (int j = 1; j < numOfKnots; j++) {
+                    rope.get(j).follow(rope.get(j-1));
+                }
+                partOneTailPositions.add(new Coordinate(rope.get(1)));
+                partTwoTailPositions.add(new Coordinate(rope.get(numOfKnots-1)));
             }
         }
 
-        System.out.println(tailPositions.size());
+        System.out.println(partOneTailPositions.size());
+        System.out.println(partTwoTailPositions.size());
     }
 
     private static class Coordinate {
