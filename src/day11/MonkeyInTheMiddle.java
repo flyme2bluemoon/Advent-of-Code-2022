@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class MonkeyInTheMiddle {
     private static final Scanner in = new Scanner(new BufferedReader(new InputStreamReader(System.in)));
+    private static int lowestCommonMultiple = 1;
 
     public static void main(String[] args) {
         ArrayList<Monkey> monkeys1 = new ArrayList<>();
@@ -17,6 +18,8 @@ public class MonkeyInTheMiddle {
                 ArrayList<Monkey> newMonkeys = monkeyFactory();
                 monkeys1.add(newMonkeys.get(0));
                 monkeys2.add(newMonkeys.get(1));
+                // NOTE: divisibility tests happen to all be prime
+                lowestCommonMultiple *= newMonkeys.get(0).getTest();
             }
         }
 
@@ -108,18 +111,11 @@ public class MonkeyInTheMiddle {
 
         public void runTurn(ArrayList<Monkey> otherMonkeys) {
             this.inspectionCount += this.startingItems.size();
-
-            // NOTE: divisibility tests happen to all be prime
-            int lowestCommonMultiple = 1;
-            for (Monkey otherMonkey : otherMonkeys) {
-                lowestCommonMultiple *= otherMonkey.getTest();
-            }
-
-            doInspections(lowestCommonMultiple);
+            doInspections();
             throwItems(otherMonkeys);
         }
 
-        private void doInspections(int lowestCommonMultiple) {
+        private void doInspections() {
             long firstOperand;
             long secondOperand;
             char operator;
