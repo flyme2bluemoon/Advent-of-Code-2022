@@ -3,6 +3,7 @@ package day13;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class DistressSignal {
@@ -12,9 +13,15 @@ public class DistressSignal {
         String firstLine, secondLine;
         NestedInteger first, second;
 
-        boolean eof = false;
         int index = 1;
         int sumOfIndicies = 0;
+        ArrayList<NestedInteger> packets = new ArrayList<>();
+        NestedInteger decoderKey2 = new NestedInteger("[[2]]");
+        NestedInteger decoderKey6 = new NestedInteger("[[6]]");
+        packets.add(decoderKey2);
+        packets.add(decoderKey6);
+
+        boolean eof = false;
         while (!eof) {
             firstLine = in.nextLine();
             secondLine = in.nextLine();
@@ -23,11 +30,14 @@ public class DistressSignal {
             second = new NestedInteger(secondLine);
 
             System.out.printf("== Pair %d ==\n", index);
-            System.out.printf("- Compare %s vs %s\n", first, second);
+            System.out.printf("- Compare %s vs %s\n\n", first, second);
 
             if (first.compareTo(second) <= 0) {
                 sumOfIndicies += index;
             }
+
+            packets.add(first);
+            packets.add(second);
 
             index++;
 
@@ -38,6 +48,9 @@ public class DistressSignal {
             }
         }
         System.out.println(sumOfIndicies);
+
+        Collections.sort(packets);
+        System.out.println((packets.indexOf(decoderKey2) + 1) * (packets.indexOf(decoderKey6) + 1));
     }
 
     private static class NestedInteger implements Comparable<NestedInteger> {
@@ -45,7 +58,6 @@ public class DistressSignal {
         private ArrayList<NestedInteger> list = null;
 
         private static final String NOT_A_LIST = "NestedInteger is not a list, it is contains only an integer. Did you mean to use the convertToList() method?";
-        private static final String NOT_AN_INT = "NestedInteger is not an integer, it is contains a list. Did you mean to access a specific element of the list using the get() method?";
 
         public NestedInteger() {
             list = new ArrayList<>();
@@ -98,24 +110,9 @@ public class DistressSignal {
             return this.list == null;
         }
 
-        private void guaranteeInteger() {
-            if (!this.isInteger())
-                throw new RuntimeException(NOT_AN_INT);
-        }
-
         private void guaranteeList() {
             if (this.isInteger())
                 throw new RuntimeException(NOT_A_LIST);
-        }
-
-        public int getValue() {
-            guaranteeInteger();
-            return this.value;
-        }
-
-        public void setValue(int value) {
-            guaranteeInteger();
-            this.value = value;
         }
 
         public NestedInteger asList() {
@@ -149,11 +146,6 @@ public class DistressSignal {
         public int size() {
             guaranteeList();
             return this.list.size();
-        }
-
-        public ArrayList<NestedInteger> getList() {
-            guaranteeList();
-            return this.list;
         }
 
         @Override
